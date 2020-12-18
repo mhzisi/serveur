@@ -1,0 +1,48 @@
+import java.io.*;
+import java.net.*;
+public class Serveur {
+static final int port = 1200;
+public static void main(String[] args) throws Exception {
+// Création d'un objet s à l'écoute du port spécifié
+ServerSocket s = new ServerSocket(port);
+System.out.println("En attente de connexion");
+Socket socClient = s.accept(); // L'acceptation d'une connexion d'un client
+System.out.println("Connexion établie");
+// On crée maintenant les flux d'entrée-sortie du Serveur
+// Un BufferedReader permet de lire par ligne.
+BufferedReader entreeServeur = new BufferedReader(
+new InputStreamReader(socClient.getInputStream())
+);
+// Un PrintWriter possède toutes les opérations print classiques.
+PrintWriter sortieServeur = new PrintWriter(
+new BufferedWriter(
+new OutputStreamWriter(socClient.getOutputStream())),
+true);
+int tab[]=new int[100]; // Tableau ou on va mettre nos entiers
+int indiceTab=0;
+while (true) {
+sortieServeur.println("Donnez moi un entier positif");
+String str = entreeServeur.readLine(); // lecture du message envoyé par le client
+if (str.equals("END")) break;
+tab[indiceTab]=Integer.parseInt(str);
+
+indiceTab++;
+}
+boolean premier=true;
+for(int i=0;i<indiceTab && premier==true;i++){
+for(int j=0;j<indiceTab && premier==true;j++)
+if(tab[i]%tab[j]==0 && i!=j && tab[i]!=1 && tab[j]!=1)
+premier=false;
+}
+if(premier)
+System.out.println("ces nombres sont premiers entre eux");
+else
+System.out.println("ces nombres ne sont pas premiers entre eux");
+
+// Fermeture des flux d'entrée-sortie du Serveur
+entreeServeur.close();
+sortieServeur.close();
+// Fermeture du socket client
+socClient.close();
+}
+}
